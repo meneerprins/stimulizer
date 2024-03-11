@@ -63,27 +63,12 @@ module Stimulizer
     self.class._stimulizer_opts
   end
 
-  # EXAMPLE: My::Fancy::FooThing => "my--fancy--foo-thing"
   def build_stimulus_controller
     klass = self.class.name
     klass = klass.gsub(_stimulizer_opts[:ignore_prefix], "") if _stimulizer_opts[:ignore_prefix].present?
     klass.underscore.dasherize.gsub("/", "--")
   end
 
-  # USAGE:
-  #   <%= stimulus(:controller)   <-- USES THE DEFAULT CONTROLLER
-  #   <%= stimulus(controller: "my-fancy-controller")
-  #   <%= stimulus(action: "click->doThing")
-  #   <%= stimulus(action: "click->doThing mouseup->otherThing")
-  #   <%= stimulus(action: "doThing") <-- default event for element
-  #   <%= stimulus(target: "button")
-  #   <%= stimulus(classes: {foo: "text-red-500", busy: "opacity-50 animate-spin"})
-  #   <%= stimulus(values: {url: "https://example.com"})
-  #   <%= stimulus(params: {foo: "bar", this_thing: "whatever"})
-  #
-  # ... or combine them:
-  #
-  #   <%= stimulus(:controller, target: "button", action: "click->doThing")
   def build_stimulus_hash(default_controller = false, controller_name: nil, controller: nil, target: nil, action: nil, params: nil, values: nil, classes: nil, outlets: nil)
     raise ArgumentError(":controller_name specified, but blank") if controller_name&.blank?
     raise ArgumentError(":controller specified, but blank") if controller&.blank?
@@ -124,7 +109,7 @@ module Stimulizer
           end
         end.compact
 
-        hash[:"data-action"] = actions.join(" ")
+        hash[:"data-do"] = actions.join(" ") # Changed from data-action to data-do
       end
 
       params&.each do |key, value|
